@@ -19,6 +19,9 @@ int get_frame_count(const std::string& part_path);
 
 int main()
 {
+    /* ----- Step 1 : Init ----- */
+
+    // Bootanimation path
     std::string path{"/oem/bootanimation/"};
 
     // Read config
@@ -33,24 +36,30 @@ int main()
     // Wait to finish initialize
     usleep(100 * 1000);
 
-    // Traverse all parts
+    /* ----- Step 2 : Display Images ----- */
+
+    /* Traverse all parts */
     for (int i = 0; i < config->getPartsCount(); ++i)
     {
-        // Traverse all frames in one part
+        /* Part[i] is anime */
         if (!config->parts[i].isStatic())
         {
             int part_frames = get_frame_count(path + "part" + std::to_string(i) + "/");
 
-            for (int j = 0; j < part_frames; ++j)
+            /* Part[i] loop times */
+            for (int j = 0; j < config->parts[i].getLoopCount(); ++j)
             {
-                std::string file = path + "part" + std::to_string(i) + "/" + "frame" + std::to_string(j) + ".png";
-
-                pngReader->loadPNG(file);
-                xDRM_Push(panel, pngReader->getData().data(), config->panel.width * config->panel.height * sizeof(uint32_t));
-                usleep(1000 * 1000 / config->parts[i].fps);
+                /* Traverse each frame in one part */
+                for (int k = 0; k < part_frames; ++k)
+                {
+                    std::string file = path + "part" + std::to_string(i) + "/" + "frame" + std::to_string(k) + ".png";
+                    pngReader->loadPNG(file);
+                    xDRM_Push(panel, pngReader->getData().data(), config->panel.width * config->panel.height * sizeof(uint32_t));
+                    usleep(1000 * 1000 / config->parts[i].fps);
+                }
             }
         }
-        // Static image
+        /* Part[i] is static */
         else
         {
             std::string file = path + "part" + std::to_string(i) + "/" + "frame" + std::to_string(0) + ".png";
@@ -59,7 +68,7 @@ int main()
         }
     }
 
-    // Exit
+    /* ----- Step 3 : Exit ----- */
     if (th_panel.joinable())
         th_panel.join();
 

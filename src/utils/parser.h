@@ -20,8 +20,11 @@ class PartConfig
 {
 public:
     int fps{0};
+    int loop{1};
 
     bool isStatic() const;
+    int getLoopCount() const;
+
 };
 
 class AnimationConfig

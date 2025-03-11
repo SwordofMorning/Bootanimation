@@ -5,6 +5,11 @@ bool PartConfig::isStatic() const
     return fps == 0;
 }
 
+int PartConfig::getLoopCount() const 
+{
+    return isStatic() ? 1 : loop;
+}
+
 size_t AnimationConfig::getPartsCount() const
 {
     return parts.size(); 
@@ -13,13 +18,14 @@ size_t AnimationConfig::getPartsCount() const
 void AnimationConfig::printConfig() const
 {
     std::cout << "Loaded animation configuration:\n"
-                << "Panel: " << panel.width << "x" << panel.height << "\n"
-                << "Offset: " << panel.offset_x << "@" << panel.offset_y << "\n"
-                << "Parts count: " << parts.size() << "\n";
+              << "Panel: " << panel.width << "x" << panel.height << "\n"
+              << "Offset: " << panel.offset_x << "@" << panel.offset_y << "\n"
+              << "Parts count: " << parts.size() << "\n";
 
     for (size_t i = 0; i < parts.size(); ++i)
     {
-        std::cout << "Part" << i << " @" << parts[i].fps << "fps\n";
+        std::cout << "Part" << i << " @" << parts[i].fps << "fps"
+                  << " (loop=" << parts[i].getLoopCount() << ")\n";
     }
 }
 
@@ -60,15 +66,12 @@ std::unique_ptr<AnimationConfig> Parser::readConfig(const std::string& filepath)
     std::string line;
     while (std::getline(file, line))
     {
-        // 跳过空行和注释
         if (line.empty() || line[0] == ';') {
             continue;
         }
 
-        // 移除前后空白
         line = trim(line);
 
-        // 处理section
         if (line[0] == '[') {
             inPanel = (line == "[panel]");
             inAnimation = (line == "[animation]");
@@ -88,7 +91,6 @@ std::unique_ptr<AnimationConfig> Parser::readConfig(const std::string& filepath)
             continue;
         }
 
-        // 解析key-value对
         auto [key, value] = parseKeyValue(line);
         if (key.empty() || value.empty()) {
             continue;
@@ -119,6 +121,13 @@ std::unique_ptr<AnimationConfig> Parser::readConfig(const std::string& filepath)
                       static_cast<size_t>(currentPart) < config->parts.size()) {
                 if (key == "fps") {
                     config->parts[currentPart].fps = std::stoi(value);
+                } else if (key == "loop") {
+                    int loopCount = std::stoi(value);
+                    if (loopCount < 1) {
+                        std::cerr << "Invalid loop count: " << loopCount << std::endl;
+                        return nullptr;
+                    }
+                    config->parts[currentPart].loop = loopCount;
                 }
             }
         } catch (const std::exception& e) {
@@ -127,13 +136,11 @@ std::unique_ptr<AnimationConfig> Parser::readConfig(const std::string& filepath)
         }
     }
 
-    // 验证必要参数是否都已读取
-    if ((paramsRead & 31) != 31) {  // 检查所有5个必要参数
+    if ((paramsRead & 31) != 31) {
         std::cerr << "Not all required parameters were read\n";
         return nullptr;
     }
 
-    // 修改打印函数
     config->printConfig();
     return config;
 }
