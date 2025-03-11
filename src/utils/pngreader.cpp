@@ -17,38 +17,42 @@ void PNGReader::cleanup()
     loaded = false;
 }
 
-void PNGReader::setError(const std::string& error)
+void PNGReader::setError(const std::string &error)
 {
     lastError = error;
     cleanup();
 }
 
-bool PNGReader::loadPNG(const std::string& filepath)
+bool PNGReader::loadPNG(const std::string &filepath)
 {
     cleanup();
 
-    FILE* fp = fopen(filepath.c_str(), "rb");
-    if (!fp) {
+    FILE *fp = fopen(filepath.c_str(), "rb");
+    if (!fp)
+    {
         setError("Cannot open file: " + filepath);
         return false;
     }
 
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-    if (!png) {
+    if (!png)
+    {
         fclose(fp);
         setError("Failed to create PNG read struct");
         return false;
     }
 
     png_infop info = png_create_info_struct(png);
-    if (!info) {
+    if (!info)
+    {
         png_destroy_read_struct(&png, nullptr, nullptr);
         fclose(fp);
         setError("Failed to create PNG info struct");
         return false;
     }
 
-    if (setjmp(png_jmpbuf(png))) {
+    if (setjmp(png_jmpbuf(png)))
+    {
         png_destroy_read_struct(&png, &info, nullptr);
         fclose(fp);
         setError("Error during PNG reading");
@@ -75,8 +79,7 @@ bool PNGReader::loadPNG(const std::string& filepath)
     if (png_get_valid(png, info, PNG_INFO_tRNS))
         png_set_tRNS_to_alpha(png);
 
-    if (color_type == PNG_COLOR_TYPE_GRAY ||
-        color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
         png_set_gray_to_rgb(png);
 
     if (!(color_type & PNG_COLOR_MASK_ALPHA))
@@ -105,4 +108,34 @@ bool PNGReader::loadPNG(const std::string& filepath)
 
     loaded = true;
     return true;
+}
+
+uint32_t PNGReader::getWidth() const
+{
+    return width;
+}
+
+uint32_t PNGReader::getHeight() const
+{
+    return height;
+}
+
+const std::vector<uint32_t> &PNGReader::getData() const
+{
+    return imageData;
+}
+
+std::vector<uint32_t> &PNGReader::getData()
+{
+    return imageData;
+}
+
+bool PNGReader::isLoaded() const
+{
+    return loaded;
+}
+
+std::string PNGReader::getLastError() const
+{
+    return lastError;
 }

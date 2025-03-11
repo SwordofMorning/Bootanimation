@@ -16,25 +16,24 @@ private:
     std::string lastError;
 
     void cleanup();
-    void setError(const std::string& error);
+    void setError(const std::string &error);
 
 public:
     PNGReader();
     ~PNGReader();
 
-    PNGReader(const PNGReader&) = delete;
-    PNGReader& operator=(const PNGReader&) = delete;
+    PNGReader(const PNGReader &) = delete;
+    PNGReader &operator=(const PNGReader &) = delete;
 
-    bool loadPNG(const std::string& filepath);
+    bool loadPNG(const std::string &filepath);
 
-    uint32_t getWidth() const { return width; }
-    uint32_t getHeight() const { return height; }
-    
     // Get BGRA888
-    const std::vector<uint32_t>& getData() const { return imageData; }
-    std::vector<uint32_t>& getData() { return imageData; }
+    const std::vector<uint32_t> &getData() const;
+    std::vector<uint32_t> &getData();
 
-    bool isLoaded() const { return loaded; }
+    uint32_t getWidth() const;
+    uint32_t getHeight() const;
 
-    std::string getLastError() const { return lastError; }
+    bool isLoaded() const;
+    std::string getLastError() const;
 };
