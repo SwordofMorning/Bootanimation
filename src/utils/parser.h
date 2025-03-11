@@ -15,7 +15,7 @@ public:
     int offset_x{0};
     int offset_y{0};
 };
-    
+
 class PartConfig
 {
 public:
@@ -24,7 +24,6 @@ public:
 
     bool isStatic() const;
     int getLoopCount() const;
-
 };
 
 class AnimationConfig
@@ -32,7 +31,7 @@ class AnimationConfig
 public:
     PanelConfig panel;
     std::vector<PartConfig> parts;
-    
+
     size_t getPartsCount() const;
     void printConfig() const;
 };
@@ -40,9 +39,9 @@ public:
 class Parser
 {
 private:
-    static std::string trim(const std::string& str);
-    static std::pair<std::string, std::string> parseKeyValue(const std::string& line);
+    static std::string trim(const std::string &str);
+    static std::pair<std::string, std::string> parseKeyValue(const std::string &line);
 
 public:
-    static std::unique_ptr<AnimationConfig> readConfig(const std::string& filepath);
+    static std::unique_ptr<AnimationConfig> readConfig(const std::string &filepath);
 };

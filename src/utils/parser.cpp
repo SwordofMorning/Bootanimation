@@ -29,7 +29,7 @@ void AnimationConfig::printConfig() const
     }
 }
 
-std::string Parser::trim(const std::string& str)
+std::string Parser::trim(const std::string &str)
 {
     size_t first = str.find_first_not_of(" \t\r\n");
     if (first == std::string::npos) return "";
@@ -37,7 +37,8 @@ std::string Parser::trim(const std::string& str)
     return str.substr(first, (last - first + 1));
 }
 
-std::pair<std::string, std::string> Parser::parseKeyValue(const std::string& line) {
+std::pair<std::string, std::string> Parser::parseKeyValue(const std::string &line)
+{
     size_t pos = line.find('=');
     if (pos == std::string::npos) {
         return {"", ""};
@@ -47,7 +48,7 @@ std::pair<std::string, std::string> Parser::parseKeyValue(const std::string& lin
     return {key, value};
 }
 
-std::unique_ptr<AnimationConfig> Parser::readConfig(const std::string& filepath)
+std::unique_ptr<AnimationConfig> Parser::readConfig(const std::string &filepath)
 {
     auto config = std::make_unique<AnimationConfig>();
     
@@ -130,7 +131,7 @@ std::unique_ptr<AnimationConfig> Parser::readConfig(const std::string& filepath)
                     config->parts[currentPart].loop = loopCount;
                 }
             }
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             std::cerr << "Error parsing value: " << e.what() << std::endl;
             return nullptr;
         }

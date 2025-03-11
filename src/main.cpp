@@ -15,7 +15,7 @@ void panel_func(int width, int height, int offset_x, int offset_y)
     xDRM_Exit(fd, panel);
 }
 
-int get_frame_count(const std::string& part_path);
+int get_frame_count(const std::string &part_path);
 
 int main()
 {
@@ -75,7 +75,7 @@ int main()
     return 0;
 }
 
-int get_frame_count(const std::string& part_path)
+int get_frame_count(const std::string &part_path)
 {
     std::vector<std::string> png_files;
 
@@ -85,7 +85,7 @@ int get_frame_count(const std::string& part_path)
         return 0;
     }
 
-    for (const auto& entry : std::filesystem::directory_iterator(part_path))
+    for (const auto &entry : std::filesystem::directory_iterator(part_path))
     {
         if (entry.is_regular_file() && entry.path().extension() == ".png")
         {
