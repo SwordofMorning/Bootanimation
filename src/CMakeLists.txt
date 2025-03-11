@@ -16,4 +16,5 @@ TARGET_LINK_LIBRARIES(
     libxkbcommon.so
     libwayland-cursor.so
     libwayland-client.so
+    libpng.so
 )
