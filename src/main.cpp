@@ -22,7 +22,7 @@ int main()
     /* ----- Step 1 : Init ----- */
 
     // Bootanimation path
-    std::string path{"/oem/bootanimation/"};
+    std::string path{"/oemven/bootanimation/"};
 
     // Read config
     auto config = Parser::readConfig(path + "desc.ini");
